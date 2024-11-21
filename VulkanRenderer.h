@@ -26,21 +26,27 @@ private:
         VkDevice logicalDevice;
     } _mainDevice;
     VkQueue _graphicsQueue;
+    VkQueue _presentationQueue;
+    VkSurfaceKHR _surface;
 
     // Vulkan functions
     // - Create Functions
     void createInstance();
     void createLogicalDevice();
+    void createSurface();
 
     // Get functions
     void getPhysicalDevice();
 
     // Support functions
+    // - Checker functions
+    bool checkDeviceExtensionSupport(VkPhysicalDevice device);
     bool checkInstanceExtensionSupport(std::vector<const char*>* checkExtensions);
     bool checkDeviceSuitable(VkPhysicalDevice device);
 
     // Getter functions
     QueueFamilyIndices getQueueFamilies(VkPhysicalDevice device);
+    SwapChainDetails getSwapChainDetails(VkPhysicalDevice device);
     
 };
 
