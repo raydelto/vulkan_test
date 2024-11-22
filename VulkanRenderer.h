@@ -5,6 +5,7 @@
 
 #include <stdexcept>
 #include <vector>
+#include <algorithm>
 #include "Utilities.h"
 
 class VulkanRenderer
@@ -28,12 +29,19 @@ private:
     VkQueue _graphicsQueue;
     VkQueue _presentationQueue;
     VkSurfaceKHR _surface;
+    VkSwapchainKHR _swapchain;
+    std::vector<SwapChainImage> _swapchainImages;
+
+    // - Utility
+    VkFormat _swapchainImageFormat;
+    VkExtent2D _swapchainExtent;
 
     // Vulkan functions
     // - Create Functions
     void createInstance();
     void createLogicalDevice();
     void createSurface();
+    void createSwapChain();
 
     // Get functions
     void getPhysicalDevice();
@@ -47,6 +55,14 @@ private:
     // Getter functions
     QueueFamilyIndices getQueueFamilies(VkPhysicalDevice device);
     SwapChainDetails getSwapChainDetails(VkPhysicalDevice device);
+
+    // Choose functions
+    VkSurfaceFormatKHR chooseBestSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& formats);
+    VkPresentModeKHR chooseBestPresentationMode(const std::vector<VkPresentModeKHR>& presentationModes);
+    VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& surfaceCapabilities);
+
+    // Create functions
+    VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
     
 };
 
