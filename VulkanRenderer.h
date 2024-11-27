@@ -32,6 +32,14 @@ private:
     VkSwapchainKHR _swapchain;
     std::vector<SwapChainImage> _swapchainImages;
 
+    // Vulkan functions
+
+    // - Pipeline
+    VkPipeline _graphicsPipeline;
+    VkPipelineLayout _pipelineLayout;
+    VkRenderPass _renderPass;
+
+
     // - Utility
     VkFormat _swapchainImageFormat;
     VkExtent2D _swapchainExtent;
@@ -41,7 +49,8 @@ private:
     void createInstance();
     void createLogicalDevice();
     void createSurface();
-    void createSwapChain();
+    void createSwapChain(); 
+    void createRenderPass();
     void createGraphicsPipeline();
 
     // Get functions
