@@ -30,7 +30,10 @@ private:
     VkQueue _presentationQueue;
     VkSurfaceKHR _surface;
     VkSwapchainKHR _swapchain;
+
     std::vector<SwapChainImage> _swapchainImages;
+    std::vector<VkFramebuffer> _swapchainFramebuffers;
+    std::vector<VkCommandBuffer> _commandBuffers;
 
     // Vulkan functions
 
@@ -38,6 +41,9 @@ private:
     VkPipeline _graphicsPipeline;
     VkPipelineLayout _pipelineLayout;
     VkRenderPass _renderPass;
+
+    // - Pools
+    VkCommandPool _graphicsCommandPool;
 
 
     // - Utility
@@ -52,6 +58,13 @@ private:
     void createSwapChain(); 
     void createRenderPass();
     void createGraphicsPipeline();
+    void createFramebuffers();
+    void createCommandPool();
+    void createCommandBuffers();
+
+    // - Record Functions
+    void recordCommands();
+
 
     // Get functions
     void getPhysicalDevice();
