@@ -86,6 +86,8 @@ void VulkanRenderer::draw()
     {
         throw std::runtime_error("Failed to present Image!");
     }
+
+    _currentFrame = (_currentFrame + 1) % MAX_FRAME_DRAWS;
 }
 
 void VulkanRenderer::cleanup()
