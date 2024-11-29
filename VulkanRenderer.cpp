@@ -28,6 +28,7 @@ int VulkanRenderer::init(GLFWwindow* newWindow)
         createCommandPool();
         createCommandBuffers();
         recordCommands();
+        createSynchronization();
     }
     catch (const std::runtime_error& e)
     {
@@ -37,8 +38,54 @@ int VulkanRenderer::init(GLFWwindow* newWindow)
     return 0;
 }
 
+void VulkanRenderer::draw()
+{
+    // -- GET NEXT IMAGE --
+
+    uint32_t imageIndex; // Index of next image to be drawn to
+    vkAcquireNextImageKHR(_mainDevice.logicalDevice, _swapchain, std::numeric_limits<uint64_t>::max(), _imageAvailable, VK_NULL_HANDLE, &imageIndex);
+
+    // -- SUBMIT COMMAND BUFFER TO RENDER --
+
+    VkSubmitInfo submitInfo = {};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.waitSemaphoreCount = 1; // Number of semaphores to wait on
+    submitInfo.pWaitSemaphores = &_imageAvailable; // List of semaphores to wait on
+    VkPipelineStageFlags waitStages[] = {
+        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+    };
+    submitInfo.pWaitDstStageMask = waitStages; // Stages to check semaphores at
+    submitInfo.commandBufferCount = 1; // Number of command buffers to submit
+    submitInfo.pCommandBuffers = &_commandBuffers[imageIndex]; // Command buffer to submit
+    submitInfo.signalSemaphoreCount = 1; // Number of semaphores to signal
+    submitInfo.pSignalSemaphores = &_renderFinished; // Semaphores to signal when command buffer finishes
+
+    // Submit command buffer to queue
+    if (vkQueueSubmit(_graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to submit Command Buffer to Queue!");
+    }
+
+    // -- PRESENT RENDERED IMAGE TO SCREEN --
+    VkPresentInfoKHR presentInfo = {};
+    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    presentInfo.waitSemaphoreCount = 1; // Number of semaphores to wait on
+    presentInfo.pWaitSemaphores = &_renderFinished; // Semaphores to wait on
+    presentInfo.swapchainCount = 1; // Number of swapchains to present to
+    presentInfo.pSwapchains = &_swapchain; // Swapchains to present images to
+    presentInfo.pImageIndices = &imageIndex; // Index of images in swapchains to present
+        
+    // Present image
+    if (vkQueuePresentKHR(_presentationQueue, &presentInfo) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to present Image!");
+    }       
+}
+
 void VulkanRenderer::cleanup()
 {
+    vkDestroySemaphore(_mainDevice.logicalDevice, _renderFinished, nullptr);
+    vkDestroySemaphore(_mainDevice.logicalDevice, _imageAvailable, nullptr);
     vkDestroyCommandPool(_mainDevice.logicalDevice, _graphicsCommandPool, nullptr);
     for (VkFramebuffer& framebuffer : _swapchainFramebuffers)
     {
@@ -365,7 +412,6 @@ void VulkanRenderer::createRenderPass()
     {
         throw std::runtime_error("Failed to create a Render Pass.");
     }
-
 }
 
 void VulkanRenderer::createGraphicsPipeline()
@@ -610,6 +656,20 @@ void VulkanRenderer::createCommandBuffers()
     }
 }
 
+void VulkanRenderer::createSynchronization()
+{
+
+    // Semaphore creation information
+    VkSemaphoreCreateInfo semaphoreCreateInfo = {};
+    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+    if (vkCreateSemaphore(_mainDevice.logicalDevice, &semaphoreCreateInfo, nullptr, &_imageAvailable) != VK_SUCCESS ||
+        vkCreateSemaphore(_mainDevice.logicalDevice, &semaphoreCreateInfo, nullptr, &_renderFinished) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create a Semaphore!");
+    }
+}
+
 void VulkanRenderer::recordCommands()
 {
     // Information about how to begin each command buffer
@@ -659,7 +719,6 @@ void VulkanRenderer::recordCommands()
             throw std::runtime_error("Failed to stop recording a Command Buffer.");
         }
     }
-
 }
 
 void VulkanRenderer::getPhysicalDevice()

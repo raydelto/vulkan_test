@@ -14,6 +14,7 @@ public:
     VulkanRenderer();
     ~VulkanRenderer();
     int init(GLFWwindow* newWindow);
+    void draw();
     void cleanup();
 
 private:
@@ -30,6 +31,8 @@ private:
     VkQueue _presentationQueue;
     VkSurfaceKHR _surface;
     VkSwapchainKHR _swapchain;
+
+    // - Swap chain
 
     std::vector<SwapChainImage> _swapchainImages;
     std::vector<VkFramebuffer> _swapchainFramebuffers;
@@ -50,6 +53,10 @@ private:
     VkFormat _swapchainImageFormat;
     VkExtent2D _swapchainExtent;
 
+    // Syncronization
+    VkSemaphore _imageAvailable;
+    VkSemaphore _renderFinished;
+
     // Vulkan functions
     // - Create Functions
     void createInstance();
@@ -61,6 +68,7 @@ private:
     void createFramebuffers();
     void createCommandPool();
     void createCommandBuffers();
+    void createSynchronization();
 
     // - Record Functions
     void recordCommands();
@@ -86,7 +94,7 @@ private:
 
     // Create functions
     VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
-    VkShaderModule createShaderModule(const std::vector<char>& code);
+    VkShaderModule createShaderModule(const std::vector<char>& code);    
     
 };
 
