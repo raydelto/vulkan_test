@@ -1,6 +1,19 @@
 #pragma once
 
 #include <fstream>
+#include <vector>
+
+#ifdef NDEBUG
+const bool gEnableValidationLayers = false;
+#else
+const bool gEnableValidationLayers = true;
+#endif
+
+constexpr int MAX_FRAME_DRAWS = 3;
+
+const std::vector<const char*> gValidationLayers = {
+    "VK_LAYER_KHRONOS_validation", "VK_LAYER_NV_optimus"
+};
 
 const std::vector<const char*> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME

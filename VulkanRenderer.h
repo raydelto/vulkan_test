@@ -19,6 +19,7 @@ public:
 
 private:
     GLFWwindow* _window;
+    int _currentFrame = 0;
 
     // Vulkan components
     VkInstance _instance;
@@ -31,6 +32,8 @@ private:
     VkQueue _presentationQueue;
     VkSurfaceKHR _surface;
     VkSwapchainKHR _swapchain;
+    VkDebugUtilsMessengerEXT _debugMessenger;
+
 
     // - Swap chain
 
@@ -39,6 +42,12 @@ private:
     std::vector<VkCommandBuffer> _commandBuffers;
 
     // Vulkan functions
+
+    // - Validation
+    bool checkValidationLayerSupport();
+    void setupDebugMessenger();
+    VkResult createDebugUtilsMessengerEXT(const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo);
+    void destroyDebugUtilsMessengerEXT();
 
     // - Pipeline
     VkPipeline _graphicsPipeline;
@@ -54,8 +63,9 @@ private:
     VkExtent2D _swapchainExtent;
 
     // Syncronization
-    VkSemaphore _imageAvailable;
-    VkSemaphore _renderFinished;
+    std::vector<VkSemaphore> _imageAvailable;
+    std::vector<VkSemaphore> _renderFinished;
+    std::vector<VkFence> _drawFences;
 
     // Vulkan functions
     // - Create Functions
