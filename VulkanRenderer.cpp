@@ -605,7 +605,7 @@ void VulkanRenderer::createGraphicsPipeline()
     rasterizer.polygonMode = VK_POLYGON_MODE_FILL;          // How to handle filling points between vertices
     rasterizer.lineWidth = 1.0f;                            // How thick lines should be when drawn
     rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;            // Which face of a tri to cull
-    rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; // Winding to determine which side is front
+    rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE; // Winding to determine which side is front
     rasterizer.depthBiasEnable = VK_FALSE;                  // Whether to add depth bias to fragments (good for stopping "shadow acne")
 
     // -- MULTISAMPLING --
