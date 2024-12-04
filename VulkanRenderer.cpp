@@ -87,11 +87,14 @@ void VulkanRenderer::draw()
         throw std::runtime_error("Failed to present Image!");
     }
 
+    // Get next frame (use % MAX_FRAME_DRAWS to keep value below MAX_FRAME_DRAWS)
     _currentFrame = (_currentFrame + 1) % MAX_FRAME_DRAWS;
 }
 
 void VulkanRenderer::cleanup()
 {
+    // Wait until no actions being run on device before destroying
+    vkDeviceWaitIdle(_mainDevice.logicalDevice);
     if (gEnableValidationLayers)
     {
         destroyDebugUtilsMessengerEXT();
@@ -787,7 +790,6 @@ void VulkanRenderer::recordCommands()
     // Information about how to begin each command buffer
     VkCommandBufferBeginInfo bufferBeginInfo = {};
     bufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    bufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT; // Buffer can be resubmitted when it has already been submitted and is awaiting execution
 
     // Information about how to begin a render pass (only needed for graphical applications)
     VkRenderPassBeginInfo renderPassInfo = {};

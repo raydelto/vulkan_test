@@ -9,7 +9,7 @@ const bool gEnableValidationLayers = false;
 const bool gEnableValidationLayers = true;
 #endif
 
-constexpr int MAX_FRAME_DRAWS = 3;
+constexpr int MAX_FRAME_DRAWS = 2;
 
 const std::vector<const char*> gValidationLayers = {
     "VK_LAYER_KHRONOS_validation", "VK_LAYER_NV_optimus"
