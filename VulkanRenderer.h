@@ -161,9 +161,6 @@ private:
 	// - Get Functions
 	void getPhysicalDevice();
 
-	// - Allocate Functions
-	void allocateDynamicBufferTransferSpace();
-
 	// - Support Functions
 	// -- Checker Functions
 	bool checkInstanceExtensionSupport(std::vector<const char*> * checkExtensions);
